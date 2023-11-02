@@ -40,6 +40,10 @@ Model 2 is trained for 10 epochs with batch size 8.
 ## Evaluation
 The trained model is evaluated on the test set. The predictions indicate the score between 0 and 1. Values closer to 0 indicates they are similar while values closer to 1 indicate they are dissimilar signature pair.
 
+# Accuracy: 0.98
+# Precision: 0.9615384615384616
+# Recall: 1.0
+# F1-Score: 0.9803921568627451
 
 ## Usage
 The models can be loaded and used to predict similarity between new signature pairs:
