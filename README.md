@@ -1,56 +1,61 @@
-Here is a detailed README.md for the Python notebook provided:
-
 # Signature Forgery Detection using Siamese Neural Networks
 
-This project trains a Siamese neural network to detect forged signatures.
+This project trains Siamese neural networks to detect forged signatures using two different base network architectures.
 
 ## Dataset
-The [CEDAR handwritten signature dataset](https://www.kaggle.com/datasets/ishanikathuria/handwritten-signature-datasets) from Kaggle is used. It contains 55 folders with 24 images in each - 12 original signatures and 12 forged signatures.
+The [CEDAR handwritten signature dataset](https://www.kaggle.com/datasets/ishanikathuria/handwritten-signature-datasets) from Kaggle is used. It contains 55 folders with 48 images in each - 24 original signatures and 24 forged signatures.
 
 ## Preprocessing
 The images are loaded, resized to 224x224 and normalized before feeding to the model.
 
-## Model
-A Siamese neural network architecture is used. It contains a base Convolutional Neural Network which generates embeddings for the input images. These embeddings are compared using a distance metric and fed to a Dense layer for classification.
-
-The base CNN contains:
+## Model 1 (Custom CNN base)
+A Siamese neural network architecture with a custom Convolutional Neural Network base is used. The base CNN contains:
 - Conv2D layers
-- MaxPooling2D layers
+- MaxPooling2D layers  
 - Flatten layer
-- Dense layer 
+- Dense layer
 
-The distance metric used is L1 distance between the embeddings.
+The embeddings from the base CNN are compared using L1 distance and passed through a Dense sigmoid layer for classification.  
 
-The model is compiled with binary crossentropy loss and adam optimizer.
+Binary crossentropy loss and adam optimizer are used.
+
+Early stopping is implemented to stop training at 95% validation accuracy.
+
+## Model 2 (VGG19 base)
+A Siamese neural network architecture with a VGG19 base is used. The first 5 layers of VGG19 are frozen. 
+
+The flattened embeddings from VGG19 are compared using L1 distance and passed through a Dense sigmoid layer.
+
+Rest of the model is same as Model 1.
 
 ## Training
-The image pairs are converted to numpy arrays and labels are assigned 0 for original-original pairs and 1 for original-forged pairs.
+The image pairs are converted to NumPy arrays and labels are assigned 0 for original-original pairs and 1 for original-forged pairs.
 
-The data is split into 70% training and 30% testing.
+The data is split 70-30 for training and validation. 
 
-The model is trained for 10 epochs with a batch size of 16. Early stopping is implemented to stop training when validation accuracy reaches 95%.
+Model 1 is trained for 10 epochs with batch size 16. 
+
+Model 2 is trained for 10 epochs with batch size 8.
 
 ## Evaluation
-The trained model is evaluated on the test set. The predictions indicate the similarity score between 0 and 1. Values closer to 0 indicate a forged signature while values closer to 1 indicate an original signature pair.
+The trained model is evaluated on the test set. The predictions indicate the score between 0 and 1. Values closer to 0 indicates they are similar while values closer to 1 indicate they are dissimilar signature pair.
+
 
 ## Usage
-The model can be loaded and used to predict similarity between new signature pairs:
+The models can be loaded and used to predict similarity between new signature pairs:
 
 ```
-model = load_model('final') 
+model = load_model('model_name')
 
-img1 = np.array([preprocess_image(image1_path)])
-image2 = np.array([preprocess_image(image2_path) ])
+img1 = np.array([preprocess_image(image1_path)]) 
+img2 = np.array([preprocess_image(image2_path)])
 
-prediction = model.predict([img1, img2])
+prediction = model.predict([img1, img2]) 
 print(prediction) # Predicted similarity score
 ```
 
-A lower score indicates the signatures are likely forged while a higher score indicates original signatures.
-
 ## Future Work
-- Experiment with different CNN architectures for the base network.
-- Try different distance metrics like euclidean distance.
-- Use more data augmentation to handle class imbalance better.
+- Experiment with different CNN architectures like ResNet50 for the base network.
+- Use more data augmentation to handle class imbalance better. 
+- Try different distance metrics like cosine distance.
 
-Let me know if you need any clarification or have additional questions!
